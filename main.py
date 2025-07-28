@@ -21,7 +21,7 @@ def check_rate_limit(request: Request):
         if current_time - req_time < 60
     ]
 
-    if len(request_times[client_ip]) >= 5:
+    if len(request_times[client_ip]) >= 25:
         raise HTTPException(
             status_code=429, detail="Rate limit exceeded: 5 requests per 60 seconds"
         )
@@ -69,8 +69,9 @@ async def update_item(request: Request, target_id: int, itemCreate: ItemCreate):
 
 
 @app.delete("/items/{target_id}")
-async def update_item(request: Request, target_id: int):
+async def delete_item(request: Request, target_id: int):
     check_rate_limit(request)
     global items
     new_items = [item for item in items if item["id"] != target_id]
     items = new_items
+    return {"msg": f"Item with id {target_id} deleted"}
