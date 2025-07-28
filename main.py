@@ -54,7 +54,7 @@ async def create_item(request: Request, itemCreate: ItemCreate):
     return ItemResponse(**item)
 
 
-@app.put("/items/{target_id}")
+@app.put("/items/{target_id}", response_model=ItemResponse)
 async def update_item(request: Request, target_id: int, itemCreate: ItemCreate):
     check_rate_limit(request)
     items_filtered = list(filter(lambda x: x["id"] == int(target_id), items))
@@ -63,7 +63,7 @@ async def update_item(request: Request, target_id: int, itemCreate: ItemCreate):
         item["name"] = itemCreate.name
         item["description"] = itemCreate.description
         item["price"] = itemCreate.price
-        return {"success": True}
+        return ItemResponse(**item)
 
     raise HTTPException(status_code=404, detail=f"Item with ID {target_id} not found")
 
