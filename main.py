@@ -3,6 +3,7 @@ import time
 from collections import defaultdict
 from fastapi import FastAPI, HTTPException, Request
 from models import ItemCreate, ItemResponse
+from servive import MAX_REQUEST_PER_IP_PER_MIN
 
 app = FastAPI()
 
@@ -21,7 +22,7 @@ def check_rate_limit(request: Request):
         if current_time - req_time < 60
     ]
 
-    if len(request_times[client_ip]) >= 25:
+    if len(request_times[client_ip]) >= MAX_REQUEST_PER_IP_PER_MIN:
         raise HTTPException(
             status_code=429, detail="Rate limit exceeded: 5 requests per 60 seconds"
         )
